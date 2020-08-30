@@ -1,0 +1,30 @@
+version: "3.3"
+services:
+  keystone:
+    image: keystone
+    volumes:
+        - data:/etc/keystone
+    environment:
+      KEYSTONE_ADMIN_PASSWORD: abc123
+      CONTROLLER: localhost
+    ports:
+      - 5001:5000
+    depends_on:
+        - keystone-cache
+        - keystone-database
+    links:
+        - keystone-cache
+        - keystone-database
+    restart: always
+
+  keystone-cache:
+    image: memcached
+  keystone-database:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: abc123
+      MYSQL_USER: keystone
+      MYSQL_PASSWORD: abc123
+      MYSQL_DATABASE: keystone
+volumes:
+    data:
