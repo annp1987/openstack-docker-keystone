@@ -1,20 +1,26 @@
-version: "3.3"
+version: "3.5"
 volumes:
     data: {}
+    mysql: {}
+networks:
+  front-tier:
+  back-tier:    
 services:
   keystone:
     image: keystone
     volumes:
-        - data:/etc/keystone/:rw
+        - ./data/:/etc/keystone/
     environment:
       KEYSTONE_ADMIN_PASSWORD: abc123
       CONTROLLER: localhost
     ports:
       - 5001:5000
-    depends_on:
-        - keystone-cache
-        - keystone-database
     links:
+      - keystone-cache:keystone-cache
+      - keystone-database:keystone-database
+    networks:
+      - back-tier
+    depends_on:
         - keystone-cache
         - keystone-database
     restart: always
@@ -28,3 +34,7 @@ services:
       MYSQL_USER: keystone
       MYSQL_PASSWORD: abc123
       MYSQL_DATABASE: keystone
+    ports: 
+      - 3306:3306
+    networks:
+      - back-tier

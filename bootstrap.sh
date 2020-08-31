@@ -1,3 +1,4 @@
+cp keystone.conf /etc/keystone/
 su -s /bin/sh -c "keystone-manage db_sync" keystone
 
 groupadd keystone
@@ -18,7 +19,7 @@ keystone-manage bootstrap --bootstrap-password $KEYSTONE_ADMIN_PASSWORD \
   --bootstrap-public-url http://$CONTROLLER:5000/v3/ \
   --bootstrap-region-id RegionOne
 
-echo "ServerName $CONTROLLER" >> /etc/apache2/apache2.conf
+#echo "ServerName $CONTROLLER" >> /etc/apache2/apache2.conf
 
 cat > /openrc <<EOF
 export OS_USERNAME=admin
@@ -34,5 +35,8 @@ if [ -f /usr/bin/post-keystone.sh ]; then
     echo "Running post-keystone.sh script"
     /usr/bin/post-keystone.sh
 fi
+
+openstack user set --project admin admin
+openstack role add --project admin --user admin admin
 
 tail -f /var/log/apache2/*
