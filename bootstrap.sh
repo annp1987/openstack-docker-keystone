@@ -19,7 +19,7 @@ keystone-manage bootstrap --bootstrap-password $KEYSTONE_ADMIN_PASSWORD \
   --bootstrap-public-url http://$CONTROLLER:5000/v3/ \
   --bootstrap-region-id RegionOne
 
-#echo "ServerName $CONTROLLER" >> /etc/apache2/apache2.conf
+echo "ServerName $CONTROLLER" >> /etc/apache2/apache2.conf
 
 cat > /openrc <<EOF
 export OS_USERNAME=admin
@@ -30,6 +30,8 @@ export OS_PROJECT_DOMAIN_NAME=Default
 export OS_AUTH_URL=http://$CONTROLLER:5000/v3
 export OS_IDENTITY_API_VERSION=3
 EOF
+
+source ~/openrc
 
 if [ -f /usr/bin/post-keystone.sh ]; then
     echo "Running post-keystone.sh script"
