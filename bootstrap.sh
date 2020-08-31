@@ -11,7 +11,7 @@ keystone-manage credential_setup --keystone-user keystone --keystone-group keyst
 keystone-manage create_jws_keypair --keystone-user keystone --keystone-group keystone
 mv private.pem /etc/keystone/jws-keys/private
 mv public.pem /etc/keystone/jws-keys/public
-
+apache2ctl -D FOREGROUND &
 keystone-manage bootstrap --bootstrap-password $KEYSTONE_ADMIN_PASSWORD \
   --bootstrap-admin-url http://$CONTROLLER:35357/v3/ \
   --bootstrap-internal-url http://$CONTROLLER:5000/v3/ \
@@ -30,5 +30,9 @@ export OS_AUTH_URL=http://$CONTROLLER:5000/v3
 export OS_IDENTITY_API_VERSION=3
 EOF
 
-a2ensite keystone
-apache2ctl -D FOREGROUND
+if [ -f /usr/bin/post-keystone.sh ]; then
+    echo "Running post-keystone.sh script"
+    /usr/bin/post-keystone.sh
+fi
+
+tail -f /var/log/apache2/*

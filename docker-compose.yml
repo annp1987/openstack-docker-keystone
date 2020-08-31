@@ -1,9 +1,11 @@
 version: "3.3"
+volumes:
+    data: {}
 services:
   keystone:
     image: keystone
     volumes:
-        - data:/etc/keystone
+        - data:/etc/keystone/:rw
     environment:
       KEYSTONE_ADMIN_PASSWORD: abc123
       CONTROLLER: localhost
@@ -26,5 +28,3 @@ services:
       MYSQL_USER: keystone
       MYSQL_PASSWORD: abc123
       MYSQL_DATABASE: keystone
-volumes:
-    data:
